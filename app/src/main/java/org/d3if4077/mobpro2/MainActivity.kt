@@ -12,11 +12,13 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.InternalCoroutinesApi
 import org.d3if4077.mobpro.MainDialog
 import org.d3if4077.mobpro2.data.Mahasiswa
 import org.d3if4077.mobpro2.data.MahasiswaDb
 import org.d3if4077.mobpro2.databinding.ActivityMainBinding
 
+@InternalCoroutinesApi
 class MainActivity : AppCompatActivity(), MainDialog.DialogListener {
 
         private lateinit var binding: ActivityMainBinding
@@ -24,7 +26,7 @@ class MainActivity : AppCompatActivity(), MainDialog.DialogListener {
         private var actionMode: ActionMode? = null
 
         private val viewModel: MainViewModel by lazy {
-            val dataSource = MahasiswaDb.getInstance(this).dao
+            val dataSource = MahasiswaDb.getInstance().dao
             val factory = MainViewModelFactory(dataSource)
             ViewModelProvider(this, factory).get(MainViewModel::class.java)
         }

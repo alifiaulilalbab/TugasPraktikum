@@ -1,10 +1,11 @@
 package org.d3if4077.mobpro2.data
 
+import com.google.firebase.database.Exclude
 
-@Entity
+
 data class Mahasiswa(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
-    val nim: String,
-    val nama: String
+        @get:Exclude
+        var id: String = "",
+    val nim: String = "",
+    val nama: String = ""
 )
