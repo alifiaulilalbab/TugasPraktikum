@@ -1,12 +1,12 @@
 package org.d3if4077.mobpro2.data
 
 
-import org.d3if4077.mobpro2.MahasiswaDao
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import kotlinx.coroutines.internal.synchronized
+import org.d3if4077.mobpro2.MahasiswaDao
 
 @Database(entities = [Mahasiswa::class], version = 1, exportSchema = false)
 abstract class MahasiswaDb : RoomDatabase()  {
@@ -14,6 +14,9 @@ abstract class MahasiswaDb : RoomDatabase()  {
     abstract val dao : MahasiswaDao
 
     companion object {
+        @VisibleForTesting
+        const val DATABASE_NAME = "mahasiswa.db"
+
         @Volatile
         private var INSTANCE: MahasiswaDb? = null
 
@@ -24,7 +27,7 @@ abstract class MahasiswaDb : RoomDatabase()  {
                     instance = Room.databaseBuilder(
                         context.applicationContext,
                         MahasiswaDb::class.java,
-                        "mahasiswa.db"
+                        DATABASE_NAME
                     ).build()
                     INSTANCE = instance
                 }
