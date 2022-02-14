@@ -1,9 +1,13 @@
 package org.d3if4077.mobpro2
 
+import android.app.NotificationManager
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
@@ -16,11 +20,16 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.activity_main.*
 import org.d3if4077.mobpro2.databinding.ActivityMainBinding
+import org.d3if4077.mobpro2.notify.AlarmUtils
+import org.d3if4077.mobpro2.notify.sendNotification
 
 
 class MainActivity : AppCompatActivity() {
 
-
+    companion object {
+        private const val CHECK_IN_URL =
+            "https://checkin.telkomuniversity.ac.id"
+    }
 
     private val contract = FirebaseAuthUIActivityResultContract()
     private val signInLauncher = registerForActivityResult(contract) { }
@@ -35,22 +44,30 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.login.setOnClickListener { mulaiLogin() }
+        binding.logout.setOnClickListener { AuthUI.getInstance().signOut(this) }
+        binding.checkin.setOnClickListener { checkInSekarang() }
         viewModel.authState.observe(this, { updateUI(it) })
 
+
+    }
+
+    private fun checkInSekarang() {
+        val intent = CustomTabsIntent.Builder().build()
+        intent.launchUrl(this, Uri.parse(CHECK_IN_URL))
     }
 
     private fun updateUI(user: FirebaseUser?) = with(binding) {
         if (user == null) {
-           tvNama.visibility = View.GONE
-            imageView.visibility = View.GONE
-            login.text = getString(R.string.login)
+            userGroup.visibility = View.GONE
+            login.visibility = View.VISIBLE
+            AlarmUtils.setAlarmOff(this@MainActivity)
         }
         else {
-            tvNama.text = user.displayName
+            namaTextView.text = user.displayName
             Glide.with(this@MainActivity).load(user.photoUrl).into(imageView)
-            tvNama.visibility = View.VISIBLE
-            imageView.visibility = View.VISIBLE
-            login.text = getString(R.string.logout)
+            userGroup.visibility = View.VISIBLE
+            login.visibility = View.GONE
+            AlarmUtils.setAlarm(this@MainActivity)
         }
     }
 
@@ -62,5 +79,4 @@ class MainActivity : AppCompatActivity() {
                 .build()
         signInLauncher.launch(intent)
     }
-
 }
