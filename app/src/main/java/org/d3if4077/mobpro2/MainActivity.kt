@@ -1,0 +1,140 @@
+package org.d3if4077.mobpro2
+
+import android.animation.*
+import android.graphics.Color
+import android.os.Build
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.view.View
+import android.view.ViewGroup
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.LinearInterpolator
+import android.widget.FrameLayout
+import android.widget.Toast
+import androidx.appcompat.widget.AppCompatImageView
+import kotlinx.android.synthetic.main.activity_main.*
+
+class MainActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        showerButton.setOnClickListener {
+            shower()
+        }
+        setContentView(R.layout.activity_main)
+        rotateButton.setOnClickListener { rotater() }
+        translateButton.setOnClickListener { translater() }
+        scaleButton.setOnClickListener { scaler() }
+        fadeButton.setOnClickListener { fader() }
+        colorizeButton.setOnClickListener { colorizer() }
+    }
+
+    private fun scaler() {
+        val scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 4f)
+        val scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 4f)
+        val animator = ObjectAnimator.ofPropertyValuesHolder(star, scaleX, scaleY)
+        animator.repeatCount = 1
+        animator.repeatMode = ObjectAnimator.REVERSE
+        animator.disableViewDuringAnimator(scaleButton)
+        animator.start()
+    }
+
+    private fun fader() {
+        val animator = ObjectAnimator.ofFloat(star, View.ALPHA, 0f)
+        animator.repeatCount = 1
+        animator.repeatMode = ObjectAnimator.REVERSE
+        animator.disableViewDuringAnimator(fadeButton)
+        animator.start()
+    }
+
+    private fun translater() {
+        val animator = ObjectAnimator.ofFloat(star, View.TRANSLATION_X, 200f)
+        animator.repeatCount = 1
+        animator.repeatMode = ObjectAnimator.REVERSE
+        animator.disableViewDuringAnimator(translateButton)
+        animator.start()
+    }
+
+    private fun colorizer() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            var animator = ObjectAnimator.ofArgb(star.parent, "backgroundColor", Color.BLACK, Color.RED)
+            animator.duration = 500
+            animator.repeatCount = 1
+            animator.repeatMode = ObjectAnimator.REVERSE
+            animator.disableViewDuringAnimator(colorizeButton)
+            animator.start()
+        } else {
+            Toast.makeText(this, getString(R.string.cannot_animate),
+                    Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun rotater() {
+        val animator = ObjectAnimator.ofFloat(star, View.ROTATION, -360f, 0f)
+        animator.duration = 100
+        animator.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationStart(animation: Animator?) {
+                rotateButton.isEnabled = false
+            }
+
+            override fun onAnimationEnd(animation: Animator?) {
+                rotateButton.isEnabled = true
+            }
+        })
+        animator.disableViewDuringAnimator(rotateButton)
+        animator.start()
+    }
+
+    private fun shower() {
+        //membuat bintang baru
+        val container = star.parent as ViewGroup
+        val containerW = container.width
+        val containerH = container.height
+        var starW: Float = star.width.toFloat()
+        var starH: Float = star.height.toFloat()
+
+        val newStar = AppCompatImageView(this)
+        newStar.setImageResource(R.drawable.ic_star)
+        FrameLayout.LayoutParams.WRAP_CONTENT
+        FrameLayout.LayoutParams.WRAP_CONTENT
+        container.addView(newStar)
+
+        //mengatur posisi kemunculan bintang
+        newStar.scaleX = Math.random().toFloat() * 1.5f + .1f
+        newStar.scaleY = newStar.scaleX
+        starW *= newStar.scaleX
+        starH *= newStar.scaleY
+        newStar.translationX = Math.random().toFloat() * containerW - starW / 2
+
+        //membuat animasi bergerak dan berputar
+        val mover = ObjectAnimator.ofFloat(newStar, View.TRANSLATION_Y,
+                -starH, containerH + starH)
+        mover.interpolator = AccelerateInterpolator(1f)
+        val rotator = ObjectAnimator.ofFloat(newStar, View.ROTATION,
+                (Math.random() * 1080).toFloat())
+        rotator.interpolator = LinearInterpolator()
+
+        val set = AnimatorSet()
+        set.playTogether(mover, rotator)
+        set.duration = (Math.random() * 1500 + 500).toLong()
+        set.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator?) {
+                container.removeView(newStar)
+            }
+        })
+        set.start()
+    }
+
+
+    private fun ObjectAnimator.disableViewDuringAnimator(view: View) {
+        addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationStart(animation: Animator?) {
+                view.isEnabled = false
+            }
+
+            override fun onAnimationEnd(animation: Animator?) {
+                view.isEnabled = true
+            }
+        })
+    }
+}
