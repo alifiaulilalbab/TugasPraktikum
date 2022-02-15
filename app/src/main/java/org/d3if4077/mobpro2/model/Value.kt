@@ -1,3 +1,6 @@
 package org.d3if4077.mobpro2.model
 
-data class Value()
+data class Value(
+    val value: Int
+
+)

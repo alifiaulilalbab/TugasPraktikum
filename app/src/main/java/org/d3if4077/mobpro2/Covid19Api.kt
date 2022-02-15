@@ -4,6 +4,7 @@ import org.d3if4077.mobpro2.model.Data
 import org.d3if4077.mobpro2.model.ListProvinsi
 import retrofit2.http.GET
 
+enum class ApiStatus { LOADING, SUCCESS, FAILED }
 object Covid19Api {
 
     private const val BASE_URL = "https://data.covid19.go.id/public/api/"
