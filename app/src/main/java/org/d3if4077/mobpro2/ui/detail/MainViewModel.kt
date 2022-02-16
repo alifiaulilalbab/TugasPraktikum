@@ -1,16 +1,19 @@
-package org.d3if4077.mobpro2
+package org.d3if4077.mobpro2.ui.detail
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.d3if4077.mobpro2.MahasiswaDao
 import org.d3if4077.mobpro2.data.Mahasiswa
-import org.d3if4077.mobpro2.data.MahasiswaDao
 
 class MainViewModel(private val db : MahasiswaDao) : ViewModel() {
 
-    val data = db.getData()
+    fun getData(kelas: String): LiveData<List<Mahasiswa>> {
+        return db.getData(kelas)
+    }
 
     fun insertData(mahasiswa: Mahasiswa) {
         viewModelScope.launch {

@@ -1,7 +1,8 @@
-package org.d3if4077.mobpro2
+package org.d3if4077.mobpro2.ui.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import org.d3if4077.mobpro2.MahasiswaDao
 
 
 class MainViewModelFactory(private val dataSource: MahasiswaDao) : ViewModelProvider.Factory {

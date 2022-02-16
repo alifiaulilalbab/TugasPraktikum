@@ -1,4 +1,4 @@
-package org.d3if4077.mobpro2
+package org.d3if4077.mobpro2.ui.detail
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

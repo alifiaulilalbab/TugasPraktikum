@@ -6,9 +6,10 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.internal.synchronized
 
-@Database(entities = [Mahasiswa::class], version = 1, exportSchema = false)
+@Database(entities = [Mahasiswa::class], version = 2, exportSchema = false)
 abstract class MahasiswaDb : RoomDatabase()  {
 
     abstract val dao : MahasiswaDao
@@ -16,6 +17,7 @@ abstract class MahasiswaDb : RoomDatabase()  {
     companion object {
         @Volatile
         private var INSTANCE: MahasiswaDb? = null
+
 
         fun getInstance(context: Context): MahasiswaDb {
             synchronized(this) {
@@ -25,7 +27,7 @@ abstract class MahasiswaDb : RoomDatabase()  {
                         context.applicationContext,
                         MahasiswaDb::class.java,
                         "mahasiswa.db"
-                    ).build()
+                    ).fallbackToDestructiveMigration().build()
                     INSTANCE = instance
                 }
                 return instance
